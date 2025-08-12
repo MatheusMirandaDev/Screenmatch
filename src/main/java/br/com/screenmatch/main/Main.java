@@ -1,11 +1,13 @@
 package br.com.screenmatch.main;
 
+import br.com.screenmatch.model.DadosEpisodio;
 import br.com.screenmatch.model.DadosSerie;
 import br.com.screenmatch.model.DadosTemporada;
 import br.com.screenmatch.service.ConsumoApi;
 import br.com.screenmatch.service.ConverteDados;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -42,5 +44,17 @@ public class Main {
 //                System.out.println(episodiosTemp.get(j).titulo());
 //            }
 //        }
+
+        List<DadosEpisodio> dadosEpisodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream())
+//                .collect(Collectors.toList());
+                .toList();
+
+//        dadosEpisodios.add(new DadosEpisodio("Episódio Extra", "Descrição do Episódio Extra", 50, "10"));
+        dadosEpisodios.stream()
+                .filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
+                .sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed())
+                .limit(5)
+                .forEach(System.out::println);
     }
 }
