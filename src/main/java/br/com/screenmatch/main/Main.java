@@ -3,58 +3,74 @@ package br.com.screenmatch.main;
 import br.com.screenmatch.model.DadosEpisodio;
 import br.com.screenmatch.model.DadosSerie;
 import br.com.screenmatch.model.DadosTemporada;
+import br.com.screenmatch.model.Episodio;
 import br.com.screenmatch.service.ConsumoApi;
 import br.com.screenmatch.service.ConverteDados;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
-    private final Scanner sc = new Scanner(System.in);
-    private final ConsumoApi consumoApi = new ConsumoApi();
-    private final ConverteDados conversor = new ConverteDados();
-    private final String URL_BASE = "https://www.omdbapi.com/?t=";
+
+    private Scanner leitura = new Scanner(System.in);
+    private ConsumoApi consumo = new ConsumoApi();
+    private ConverteDados conversor = new ConverteDados();
+    private final String ENDERECO = "https://www.omdbapi.com/?t=";
     private final String API_KEY = "&apikey=6585022c";
 
+    public void exibeMenu() {
+        var menu = """
+                1 - Buscar séries
+                2 - Buscar episódios
+                
+                0 - Sair                                 
+                """;
 
-    public void menu() {
-        System.out.println("digite o nome de uma série para buscar");
-        var nomeSerie = sc.nextLine();
-        var json = consumoApi.getDados(URL_BASE + nomeSerie.replace(" ", "+") + API_KEY);
+        System.out.println(menu);
+        var opcao = leitura.nextInt();
+        leitura.nextLine();
 
-        var dados = conversor.obterDados(json, DadosSerie.class);
-        System.out.println(dados);
-
-        List<DadosTemporada> temporadas = new ArrayList<>();
-        for (int i = 1; i <= dados.totalTemps(); i++) {
-            json = consumoApi.getDados(URL_BASE + nomeSerie.replace(" ", "+") + "&season=" + i + API_KEY);
-            var dadosTemporadas = conversor.obterDados(json, DadosTemporada.class);
-            temporadas.add(dadosTemporadas);
+        switch (opcao) {
+            case 1:
+                buscarSerieWeb();
+                break;
+            case 2:
+                buscarEpisodioPorSerie();
+                break;
+            case 0:
+                System.out.println("Saindo...");
+                break;
+            default:
+                System.out.println("Opção inválida");
         }
+    }
 
+    private void buscarSerieWeb() {
+        DadosSerie dados = getDadosSerie();
+        System.out.println(dados);
+    }
+
+    private DadosSerie getDadosSerie() {
+        System.out.println("Digite o nome da série para busca");
+        var nomeSerie = leitura.nextLine();
+        var json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + API_KEY);
+        DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
+        return dados;
+    }
+
+    private void buscarEpisodioPorSerie(){
+        DadosSerie dadosSerie = getDadosSerie();
+        List<DadosTemporada> temporadas = new ArrayList<>();
+
+        for (int i = 1; i <= dadosSerie.totalTemporadas(); i++) {
+            var json = consumo.obterDados(ENDERECO + dadosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
+            DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
+            temporadas.add(dadosTemporada);
+        }
         temporadas.forEach(System.out::println);
-
-        temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
-
-//        for(int i = 0; i < dados.totalTemps(); i++){
-//            List<DadosEpisodio> episodiosTemp = temporadas.get(i).episodios();
-//            for (int j = 0; j < episodiosTemp.size(); j++) {
-//                System.out.println(episodiosTemp.get(j).titulo());
-//            }
-//        }
-
-        List<DadosEpisodio> dadosEpisodios = temporadas.stream()
-                .flatMap(t -> t.episodios().stream())
-//                .collect(Collectors.toList());
-                .toList();
-
-//        dadosEpisodios.add(new DadosEpisodio("Episódio Extra", "Descrição do Episódio Extra", 50, "10"));
-        dadosEpisodios.stream()
-                .filter(e -> !e.avaliacao().equalsIgnoreCase("N/A"))
-                .sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed())
-                .limit(5)
-                .forEach(System.out::println);
     }
 }

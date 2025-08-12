@@ -14,7 +14,7 @@ public class ConsumoApi {
      * @return corpo da resposta em formato JSON
      * @throws RuntimeException se ocorrer um erro durante a requisição
      */
-    public String getDados(String endereco) {
+    public String obterDados(String endereco) {
         // HttpClient é usado para enviar requisições HTTP e receber respostas
         HttpClient client = HttpClient.newHttpClient();
 
