@@ -1,5 +1,7 @@
 package br.com.screenmatch.model;
 
+import br.com.screenmatch.service.ConsultaChatGPT;
+
 import java.util.OptionalDouble;
 
 public class Serie {
@@ -9,7 +11,7 @@ public class Serie {
     private Categoria genero;
     private String atores;
     private String poster;
-    private String plot;
+    private String  sinopse;
 
 
     public Serie(DadosSerie dadosSerie) {
@@ -19,7 +21,7 @@ public class Serie {
         this.genero = Categoria.fromString(dadosSerie.genero().split(",")[0].trim());
         this.atores = dadosSerie.atores();
         this.poster = dadosSerie.poster();
-        this.plot = dadosSerie.plot();
+        this.sinopse = ConsultaChatGPT.obterTraducao(dadosSerie.sinopse()).trim();
     }
 
     public String getTitulo() {
@@ -70,22 +72,22 @@ public class Serie {
         this.poster = poster;
     }
 
-    public String getPlot() {
-        return plot;
+    public String getSinopse() {
+        return sinopse;
     }
 
-    public void setPlot(String plot) {
-        this.plot = plot;
+    public void setSinopse(String plot) {
+        this.sinopse = plot;
     }
 
     @Override
     public String toString() {
-        return  "genero=" + genero +
+        return "genero=" + genero +
                 ", titulo='" + titulo + '\'' +
                 ", totalTemporadas=" + totalTemporadas +
                 ", avaliacao=" + avaliacao +
                 ", atores='" + atores + '\'' +
                 ", poster='" + poster + '\'' +
-                ", plot='" + plot + '\'';
+                ", sinopse='" + sinopse + '\'';
     }
 }
