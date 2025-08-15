@@ -3,6 +3,8 @@ package br.com.screenmatch.model;
 import br.com.screenmatch.service.ConsultaDeepL;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalDouble;
 
 @Entity
@@ -12,15 +14,25 @@ public class Serie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Column(unique = true)
     private String titulo;
+
     private Integer totalTemporadas;
+
     private Double avaliacao;
+
     @Enumerated(EnumType.STRING)
     private Categoria genero;
+
     private String atores;
+
     private String poster;
+
     private String  sinopse;
+
+    @Transient
+    private List<Episodio> episodios = new ArrayList<>();
 
 
     public Serie(DadosSerie dadosSerie) {
@@ -31,6 +43,14 @@ public class Serie {
         this.atores = dadosSerie.atores();
         this.poster = dadosSerie.poster();
         this.sinopse = ConsultaDeepL.obterTraducao(dadosSerie.sinopse()).trim();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitulo() {
@@ -87,6 +107,14 @@ public class Serie {
 
     public void setSinopse(String plot) {
         this.sinopse = plot;
+    }
+
+    public List<Episodio> getEpisodios() {
+        return episodios;
+    }
+
+    public void setEpisodios(List<Episodio> episodios) {
+        this.episodios = episodios;
     }
 
     @Override
