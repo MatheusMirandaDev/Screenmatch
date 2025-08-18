@@ -96,10 +96,7 @@ public class Main {
     }
 
     private void listarSeriesBuscadas() {
-        List<Serie> series = new ArrayList<>();
-        series = dadosSeries.stream()
-                .map(s -> new Serie(s))
-                .collect(Collectors.toList());
+        var series = repository.findAll();
 
         series.stream()
                 .sorted(Comparator.comparing(Serie::getGenero))
