@@ -1,13 +1,9 @@
 package br.com.screenmatch.main;
 
-import br.com.screenmatch.model.DadosSerie;
-import br.com.screenmatch.model.DadosTemporada;
-import br.com.screenmatch.model.Episodio;
-import br.com.screenmatch.model.Serie;
+import br.com.screenmatch.model.*;
 import br.com.screenmatch.repository.SerieRepository;
 import br.com.screenmatch.service.ConsumoApi;
 import br.com.screenmatch.service.ConverteDados;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,6 +36,8 @@ public class Main {
                     3 - Listar series
                     4- Buscar série por título
                     5- Buscar séries por ator
+                    6- Buscar top 5 séries
+                    7- Buscar séries por categoria
                     0 - Sair
                     """;
 
@@ -66,6 +64,14 @@ public class Main {
                     break;
                 case 5:
                     buscarSeriesPorAtor();
+                    System.out.println();
+                    break;
+                case 6:
+                    buscarTop5Series();
+                    System.out.println();
+                    break;
+                case 7:
+                    buscarSeriesPorCategoria();
                     System.out.println();
                     break;
                 case 0:
@@ -158,4 +164,23 @@ public class Main {
         seriesEncontradas.forEach(s ->
                 System.out.println(s.getTitulo()));
     }
+
+    private void buscarTop5Series(){
+        var topSeries = repository.findTop5ByOrderByAvaliacaoDesc();
+
+        topSeries.forEach(s ->
+                System.out.println(s.getTitulo() + " avaliação: " + s.getAvaliacao()));
+
+    }
+
+    private void buscarSeriesPorCategoria(){
+        System.out.println();
+        var nomeGenero = leitura.nextLine();
+        var categoria = Categoria.fromPortugues(nomeGenero);
+
+        List<Serie> seriesPorCategoria = repository.findByGenero(categoria);
+
+        seriesPorCategoria.forEach(System.out::println);
+    }
+
 }

@@ -1,5 +1,6 @@
 package br.com.screenmatch.repository;
 
+import br.com.screenmatch.model.Categoria;
 import br.com.screenmatch.model.Serie;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,4 +11,8 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
     Optional<Serie> findByTituloContainingIgnoreCase(String serie);
 
     List<Serie> findByAtoresContainingIgnoreCase(String ator);
+
+    List<Serie> findTop5ByOrderByAvaliacaoDesc();
+
+    List<Serie> findByGenero(Categoria categoria);
 }
