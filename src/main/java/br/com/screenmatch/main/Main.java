@@ -38,7 +38,8 @@ public class Main {
                     1 - Buscar séries
                     2 - Buscar episódios
                     3 - Listar series
-                    4- Buscar séries por título
+                    4- Buscar série por título
+                    5- Buscar séries por ator
                     0 - Sair
                     """;
 
@@ -60,7 +61,11 @@ public class Main {
                     System.out.println();
                     break;
                 case 4:
-                    buscarSeriesPorTitulo();
+                    buscarSeriePorTitulo();
+                    System.out.println();
+                    break;
+                case 5:
+                    buscarSeriesPorAtor();
                     System.out.println();
                     break;
                 case 0:
@@ -129,7 +134,7 @@ public class Main {
                 .forEach(System.out::println);
     }
 
-    private void buscarSeriesPorTitulo(){
+    private void buscarSeriePorTitulo(){
         System.out.println("Digite o nome da série para busca");
         var nomeSerie = leitura.nextLine();
 
@@ -141,5 +146,16 @@ public class Main {
             System.out.println("serie não encontrada");
         }
 
+    }
+
+    private void buscarSeriesPorAtor(){
+        System.out.println("Digite o nome do ator");
+        var ator = leitura.nextLine();
+
+        var seriesEncontradas = repository.findByAtoresContainingIgnoreCase(ator);
+
+        System.out.println("series em que " + ator + " trabalhou: ");
+        seriesEncontradas.forEach(s ->
+                System.out.println(s.getTitulo()));
     }
 }
